@@ -9,11 +9,11 @@ import (
 func Scrap(ctx context.Context, count int, output string) {
 	responses, err := GetCars(ctx, count)
 
-	if err != nil || len(*responses) == 0 {
+	if err != nil || len(responses) == 0 {
 		logger.Fatal("Scrap: ", err)
 	}
 
-	err = fileutil.WriteResponse(output, *responses)
+	err = fileutil.WriteResponse(output, responses)
 
 	if err != nil {
 		logger.Error("Fail write response to file: ", err)
