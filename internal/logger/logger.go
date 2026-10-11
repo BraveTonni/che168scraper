@@ -2,7 +2,7 @@ package logger
 
 import "github.com/sirupsen/logrus"
 
-var log *logrus.Logger = logrus.New()
+var log = logrus.New()
 
 func Debug(args ...any)                 { log.Debug(args...) }
 func Debugf(format string, args ...any) { log.Debugf(format, args...) }
