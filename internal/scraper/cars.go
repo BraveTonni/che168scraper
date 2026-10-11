@@ -49,7 +49,7 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 		if pageIndex != iterations {
 			logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
 		} else {
-			var remainedCars = count % pageSize
+			remainedCars := count % pageSize
 			searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
 			searchResponse.Result.CarsCount = remainedCars
 			logger.Debugf("Scrapped %d/%d cars\n", count, count)
