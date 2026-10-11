@@ -13,7 +13,6 @@ A tool for scraping a specified number of cars from the che168 website (https://
 
 ## RunBook: how to start?
 make up - command to run (for development)
-make build - command to build
 
 ## Requirements
 * go 1.26+
