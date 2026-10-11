@@ -8,7 +8,7 @@ import (
 )
 
 func MakeRequest(url string) (*model.SearchResponse, error) {
-	client := NewHttpClient()
+	client := NewHTTPClient()
 	resp, err := client.Get(url)
 
 	var result model.SearchResponse
