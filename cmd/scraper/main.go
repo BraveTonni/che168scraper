@@ -23,7 +23,7 @@ func main() {
 		logger.Fatal("Count must be > 0.")
 	}
 
-	os.MkdirAll("out", 0644)
+	os.MkdirAll("out", 0755)
 	output := filepath.Join("out/", *outFileName+".json")
 
 	logger.Info("Start scrapping cars")
