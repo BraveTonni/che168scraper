@@ -7,11 +7,11 @@ import (
 	"scraper/internal/model"
 )
 
-func WriteResponse(out string, responses []model.SearchResponse) {
+func WriteResponse(out string, responses []model.SearchResponse) error {
 	data, err := json.MarshalIndent(responses, "", jsonIndent)
 
 	if err != nil {
-		logger.Error("json serializition: ", err)
+		return err
 	}
 
 	_, err = os.Stat(out)
@@ -23,6 +23,8 @@ func WriteResponse(out string, responses []model.SearchResponse) {
 	err = os.WriteFile(out, data, 0755)
 
 	if err != nil {
-		logger.Error("write bytes to file: ", err)
+		return err
 	}
+
+	return nil
 }

@@ -12,7 +12,11 @@ func Scrap(count int, output string) {
 		logger.Fatal("Scrap: ", err)
 	}
 
-	fileutil.WriteResponse(output, *responses)
+	err = fileutil.WriteResponse(output, *responses)
+
+	if err != nil {
+		logger.Error("Fail write response to file: ", err)
+	}
 
 	logger.Info("Scrap finished. Result writed to: ", output)
 }
