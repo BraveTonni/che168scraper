@@ -20,7 +20,7 @@ func WriteResponse(out string, responses []dto.SearchResponse) error {
 		logger.Warnf("File %s rewrited\n", out)
 	}
 
-	err = os.WriteFile(out, data, 0755)
+	err = os.WriteFile(out, data, 0o755)
 
 	if err != nil {
 		return err
