@@ -2,20 +2,11 @@ package network
 
 import (
 	"net/http"
-	"sync"
 	"time"
 )
 
-var (
-	httpClient *http.Client
-	once       sync.Once
-)
+const defaultTimeout = 10 * time.Second
 
-func NewHttpClient() *http.Client {
-	once.Do(func() {
-		httpClient = &http.Client{
-			Timeout: 10 * time.Second,
-		}
-	})
-	return httpClient
+func NewHTTPClient() *http.Client {
+	return &http.Client{Timeout: defaultTimeout}
 }
