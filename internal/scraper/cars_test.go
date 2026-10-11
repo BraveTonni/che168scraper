@@ -1,11 +1,15 @@
 package scraper_test
 
 import (
+	"context"
 	"scraper/internal/scraper"
 	"testing"
 )
 
 func TestGetCars(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	tests := []struct {
 		name      string
 		count     int
@@ -31,7 +35,7 @@ func TestGetCars(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Act
-			responses, err := scraper.GetCars(tt.count)
+			responses, err := scraper.GetCars(ctx, tt.count)
 
 			// Assert
 			if err != nil {

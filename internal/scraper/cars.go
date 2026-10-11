@@ -1,6 +1,7 @@
 package scraper
 
 import (
+	"context"
 	"encoding/json"
 	"net/url"
 	"scraper/internal/logger"
@@ -9,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetCars(count int) (*[]model.SearchResponse, error) {
+func GetCars(ctx context.Context, count int) (*[]model.SearchResponse, error) {
 	iterations := count / pageSize
 	// We add one to the number of iterations, because if the user passes a number that is not divisible by 50 without a remainder, then we will lose the remaining part.
 	if count%pageSize != 0 {
@@ -32,7 +33,7 @@ func GetCars(count int) (*[]model.SearchResponse, error) {
 		q.Set("pageindex", strconv.Itoa(pageIndex))
 		u.RawQuery = q.Encode()
 
-		resp, err := network.MakeRequest(u.String())
+		resp, err := network.MakeRequest(ctx, u.String())
 		if err != nil {
 			// We do not return an error, as this may be a one-off
 			logger.Warn("Failed to get cars from page: ", err)

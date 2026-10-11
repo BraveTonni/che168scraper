@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	logger.Init()
 
 	count := flag.Int("count", 15, "car parsing count")
@@ -26,5 +29,5 @@ func main() {
 	logger.Info("Start scrapping cars")
 
 	// Run scrapping from site
-	scraper.Scrap(*count, output)
+	scraper.Scrap(ctx, *count, output)
 }

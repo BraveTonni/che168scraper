@@ -1,12 +1,13 @@
 package scraper
 
 import (
+	"context"
 	"scraper/internal/fileutil"
 	"scraper/internal/logger"
 )
 
-func Scrap(count int, output string) {
-	responses, err := GetCars(count)
+func Scrap(ctx context.Context, count int, output string) {
+	responses, err := GetCars(ctx, count)
 
 	if err != nil || len(*responses) == 0 {
 		logger.Fatal("Scrap: ", err)

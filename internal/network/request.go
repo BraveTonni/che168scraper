@@ -1,23 +1,31 @@
 package network
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"scraper/internal/logger"
 	"time"
 )
 
-func MakeRequest(url string) ([]byte, error) {
+func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 	client := NewHTTPClient()
 
 	var (
 		attempt int
 		resp    *http.Response
+		req     *http.Request
 		err     error
 	)
 
 	for {
-		resp, err = client.Get(url)
+		req, err = http.NewRequestWithContext(ctx, "GET", url, nil)
+
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err = client.Do(req)
 
 		if err != nil {
 			if attempt == maxAttempts {
@@ -25,9 +33,19 @@ func MakeRequest(url string) ([]byte, error) {
 				return nil, err
 			}
 
+			if err = ctx.Err(); err != nil {
+				return nil, err
+			}
+
 			attempt++
 			logger.Warnf("Failed reach to site %s. Attempt %d/%d\n", url, attempt, maxAttempts)
-			time.Sleep(retryTimeout)
+
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(retryTimeout):
+			}
+
 			continue
 		}
 
