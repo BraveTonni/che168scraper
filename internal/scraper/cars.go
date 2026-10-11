@@ -46,14 +46,19 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 			logger.Fatal("Get cars: ", ErrCarsLessThenPassed)
 		}
 
-		if pageIndex != iterations {
-			logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
-		} else {
-			remainedCars := count % pageSize
-			searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
-			searchResponse.Result.CarsCount = remainedCars
+		// Last page
+		if pageIndex == iterations {
+			// Without verification, the page will be truncated to zero.
+			if count%pageSize != 0 {
+				remainedCars := count % pageSize
+				searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
+				searchResponse.Result.CarsCount = remainedCars
+			}
+
 			logger.Debugf("Scrapped %d/%d cars\n", count, count)
 		}
+
+		logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
 
 		result = append(result, searchResponse)
 	}
