@@ -15,6 +15,6 @@ A tool for scraping a specified number of cars from the che168 website (https://
 make up - command to run (for development)
 
 ## Requirements
-* go 1.26+
+* go 1.27+
 * Make (optional, for the RunBook commands)
 * Internet access to global.che168.com
