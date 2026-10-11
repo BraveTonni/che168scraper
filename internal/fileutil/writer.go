@@ -2,7 +2,6 @@ package fileutil
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"scraper/internal/logger"
 	"scraper/internal/model"
@@ -12,7 +11,7 @@ func WriteResponse(out string, responses []model.SearchResponse) {
 	data, err := json.MarshalIndent(responses, "", jsonIndent)
 
 	if err != nil {
-		log.Fatal("json serializition: ", err)
+		logger.Error("json serializition: ", err)
 	}
 
 	_, err = os.Stat(out)
@@ -24,6 +23,6 @@ func WriteResponse(out string, responses []model.SearchResponse) {
 	err = os.WriteFile(out, data, 0644)
 
 	if err != nil {
-		log.Fatal("write bytes to file: ", err)
+		logger.Error("write bytes to file: ", err)
 	}
 }
