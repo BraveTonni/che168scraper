@@ -20,7 +20,7 @@ func WriteResponse(out string, responses []model.SearchResponse) {
 		logger.Warnf("File %s rewrited\n", out)
 	}
 
-	err = os.WriteFile(out, data, 0644)
+	err = os.WriteFile(out, data, 0755)
 
 	if err != nil {
 		logger.Error("write bytes to file: ", err)
