@@ -23,7 +23,7 @@ type SearchCar struct {
 type SearchResult struct {
 	CarList []SearchCar `json:"carlist"`
 
-	PageCount  int    `json:"pagecount"`
+	CarsCount  int    `json:"pagecount"`
 	PageIndex  int    `json:"pageindex"`
 	PageSize   int    `json:"pagesize"`
 	QueryId    string `json:"queryid"`

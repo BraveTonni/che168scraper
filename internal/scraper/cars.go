@@ -51,7 +51,7 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 		} else {
 			var remainedCars = count % pageSize
 			searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
-			searchResponse.Result.PageCount = remainedCars
+			searchResponse.Result.CarsCount = remainedCars
 			logger.Debugf("Scrapped %d/%d cars\n", count, count)
 		}
 
