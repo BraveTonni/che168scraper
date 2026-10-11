@@ -9,7 +9,7 @@ import (
 func Scrap(count int, output string) {
 	responses, err := GetCars(count)
 
-	if err != nil {
+	if err != nil || len(responses) == 0 {
 		log.Fatal("Scrap: ", err)
 	}
 
