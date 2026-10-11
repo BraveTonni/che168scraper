@@ -4,20 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"net/url"
+	"scraper/internal/dto"
 	"scraper/internal/logger"
-	"scraper/internal/model"
 	"scraper/internal/network"
 	"strconv"
 )
 
-func GetCars(ctx context.Context, count int) ([]model.SearchResponse, error) {
+func GetCars(ctx context.Context, count int) ([]dto.SearchResponse, error) {
 	iterations := count / pageSize
 	// We add one to the number of iterations, because if the user passes a number that is not divisible by 50 without a remainder, then we will lose the remaining part.
 	if count%pageSize != 0 {
 		iterations++
 	}
 
-	var result []model.SearchResponse
+	var result []dto.SearchResponse
 
 	for pageIndex := range iterations {
 		pageIndex++
@@ -40,7 +40,7 @@ func GetCars(ctx context.Context, count int) ([]model.SearchResponse, error) {
 			continue
 		}
 
-		var searchResponse model.SearchResponse
+		var searchResponse dto.SearchResponse
 		if err = json.Unmarshal(resp, &searchResponse); err != nil {
 			logger.Warn("Failed to unmarshal json: ", err)
 			continue

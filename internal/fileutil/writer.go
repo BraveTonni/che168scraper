@@ -3,11 +3,11 @@ package fileutil
 import (
 	"encoding/json"
 	"os"
+	"scraper/internal/dto"
 	"scraper/internal/logger"
-	"scraper/internal/model"
 )
 
-func WriteResponse(out string, responses []model.SearchResponse) error {
+func WriteResponse(out string, responses []dto.SearchResponse) error {
 	data, err := json.MarshalIndent(responses, "", jsonIndent)
 
 	if err != nil {
