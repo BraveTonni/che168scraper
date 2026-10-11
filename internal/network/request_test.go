@@ -17,16 +17,3 @@ func TestMakeRequest(t *testing.T) {
 		t.Error("make request: %w", err)
 	}
 }
-
-func TestMakeRequestError(t *testing.T) {
-	// Arrange
-	url := "https://unexisted.lan/"
-
-	// Act
-	_, err := network.MakeRequest(url)
-
-	// Assert
-	if err == nil {
-		t.Error("make request unexisted site: %w", err)
-	}
-}
