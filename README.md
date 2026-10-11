@@ -3,8 +3,8 @@
 A tool for scraping a specified number of cars from the che168 website (https://global.che168.com/)
 
 ## How to use?
-* Windows: scraper.exe --count 50 --output cars.json
-* Linux: ./scraper --count 50 --output cars.json
+* Windows: scraper.exe -count 50 -output cars
+* Linux: ./scraper -count 50 -output cars
 
 ## How it works?
 * Sends a request to the site's hidden API
