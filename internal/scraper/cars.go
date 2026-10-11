@@ -25,7 +25,6 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 		)
 		if err != nil {
 			// We do not return an error, as this may be a one-off
-			// TODO: implement retries mechanism
 			logger.Warn("Failed to get cars from page: ", err)
 			continue
 		}
