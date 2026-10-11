@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"os"
 	"path/filepath"
 	"scraper/internal/logger"
 	"scraper/internal/scraper"
@@ -19,6 +20,7 @@ func main() {
 		logger.Fatal("Count must be > 0.")
 	}
 
+	os.MkdirAll("out", 0644)
 	output := filepath.Join("out/", *outFileName+".json")
 
 	logger.Info("Start scrapping cars")
