@@ -2,10 +2,11 @@ package scraper
 
 import (
 	"encoding/json"
-	"fmt"
+	"net/url"
 	"scraper/internal/logger"
 	"scraper/internal/model"
 	"scraper/internal/network"
+	"strconv"
 )
 
 func GetCars(count int) ([]model.SearchResponse, error) {
@@ -20,9 +21,14 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 	for offset := range iterations {
 		offset++ // Add one to offset, because page index on site starting with 1
 
-		resp, err := network.MakeRequest(
-			baseUrl + fmt.Sprintf("&pagesize=%d&pageindex=%d", pageSize, offset),
-		)
+		u, _ := url.Parse(baseURL)
+
+		q := u.Query()
+		q.Set("pagesize", strconv.Itoa(pageSize))
+		q.Set("pageindex", strconv.Itoa(offset))
+		u.RawQuery = q.Encode()
+
+		resp, err := network.MakeRequest(u.String())
 		if err != nil {
 			// We do not return an error, as this may be a one-off
 			logger.Warn("Failed to get cars from page: ", err)
