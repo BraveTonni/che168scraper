@@ -10,7 +10,7 @@ import (
 )
 
 func GetCars(count int) ([]model.SearchResponse, error) {
-	iterations := count / 50
+	iterations := count / pageSize
 	// We add one to the number of iterations, because if the user passes a number that is not divisible by 50 without a remainder, then we will lose the remaining part.
 	if count%pageSize != 0 {
 		iterations++
@@ -18,14 +18,14 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 
 	var result []model.SearchResponse
 
-	for offset := range iterations {
-		offset++ // Add one to offset, because page index on site starting with 1
+	for pageIndex := range iterations {
+		pageIndex++
 
 		u, _ := url.Parse(baseURL)
 
 		q := u.Query()
 		q.Set("pagesize", strconv.Itoa(pageSize))
-		q.Set("pageindex", strconv.Itoa(offset))
+		q.Set("pageindex", strconv.Itoa(pageIndex))
 		u.RawQuery = q.Encode()
 
 		resp, err := network.MakeRequest(u.String())
@@ -46,8 +46,8 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 			logger.Fatal("Get cars: ", ErrCarsLessThenPassed)
 		}
 
-		if offset != iterations {
-			logger.Debugf("Scrapped %d/%d cars\n", pageSize*offset, count)
+		if pageIndex != iterations {
+			logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
 		} else {
 			var remainedCars = count % pageSize
 			searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
