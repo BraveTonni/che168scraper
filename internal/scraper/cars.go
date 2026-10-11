@@ -40,9 +40,17 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 		if searchResponse.Result.TotalCount < count {
 			logger.Fatal("Get cars: ", ErrCarsLessThenPassed)
 		}
-		result = append(result, searchResponse)
 
-		logger.Debugf("Scrapped %d/%d cars\n", pageSize*offset, count)
+		if offset != iterations {
+			logger.Debugf("Scrapped %d/%d cars\n", pageSize*offset, count)
+		} else {
+			var remainedCars = count % pageSize
+			searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
+			searchResponse.Result.PageCount = remainedCars
+			logger.Debugf("Scrapped %d/%d cars\n", count, count)
+		}
+
+		result = append(result, searchResponse)
 	}
 
 	return result, nil
