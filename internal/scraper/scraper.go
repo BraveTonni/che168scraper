@@ -8,11 +8,11 @@ import (
 func Scrap(count int, output string) {
 	responses, err := GetCars(count)
 
-	if err != nil || len(responses) == 0 {
+	if err != nil || len(*responses) == 0 {
 		logger.Fatal("Scrap: ", err)
 	}
 
-	fileutil.WriteResponse(output, responses)
+	fileutil.WriteResponse(output, *responses)
 
 	logger.Info("Scrap finished. Result writed to: ", output)
 }

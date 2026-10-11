@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func GetCars(count int) ([]model.SearchResponse, error) {
+func GetCars(count int) (*[]model.SearchResponse, error) {
 	iterations := count / pageSize
 	// We add one to the number of iterations, because if the user passes a number that is not divisible by 50 without a remainder, then we will lose the remaining part.
 	if count%pageSize != 0 {
@@ -21,7 +21,11 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 	for pageIndex := range iterations {
 		pageIndex++
 
-		u, _ := url.Parse(baseURL)
+		u, err := url.Parse(baseURL)
+
+		if err != nil {
+			return &result, err
+		}
 
 		q := u.Query()
 		q.Set("pagesize", strconv.Itoa(pageSize))
@@ -63,5 +67,5 @@ func GetCars(count int) ([]model.SearchResponse, error) {
 		result = append(result, searchResponse)
 	}
 
-	return result, nil
+	return &result, nil
 }

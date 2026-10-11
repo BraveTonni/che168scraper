@@ -37,8 +37,8 @@ func TestGetCars(t *testing.T) {
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
-			if len(responses) != tt.wantPages {
-				t.Errorf("got %d pages, want %d", len(responses), tt.wantPages)
+			if len(*responses) != tt.wantPages {
+				t.Errorf("got %d pages, want %d", len(*responses), tt.wantPages)
 			}
 		})
 	}
