@@ -11,7 +11,7 @@ type SearchCar struct {
 	ImageUrl    string `json:"image_url"`
 	InfoId      int    `json:"info_id"`
 	Mileage     string `json:"mileage"`
-	MrStatus    string `json:"mr_status"`
+	MrStatus    int    `json:"mr_status"`
 	Price       string `json:"price"`
 	RegDate     string `json:"regdate"`
 	SeriesName  string `json:"seriesname"`
