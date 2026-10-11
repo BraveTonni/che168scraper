@@ -61,9 +61,9 @@ func GetCars(ctx context.Context, count int) (*[]model.SearchResponse, error) {
 			}
 
 			logger.Debugf("Scrapped %d/%d cars\n", count, count)
+		} else {
+			logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
 		}
-
-		logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
 
 		result = append(result, searchResponse)
 	}
