@@ -12,12 +12,13 @@ import (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	logger.Init()
 
 	count := flag.Int("count", 15, "car parsing count")
 	outFileName := flag.String("output", "default", "output file name in folder out/ without .json")
+	debug := flag.Bool("debug", false, "enable debug logging mode")
 
 	flag.Parse()
+	logger.Init(*debug)
 
 	if *count <= 0 {
 		logger.Fatal("Count must be > 0.")
