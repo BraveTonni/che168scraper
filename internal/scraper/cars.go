@@ -8,11 +8,11 @@ import (
 )
 
 func GetCars(ctx context.Context, carsCount int) ([]dto.SearchResponse, error) {
-	iterations := calculateIterations(carsCount)
+	iterations := CalculateIterations(carsCount)
 	result := make([]dto.SearchResponse, 0, iterations)
 
 	for pageIndex := 1; pageIndex <= iterations; pageIndex++ {
-		currentSize := calculateCarsOnPage(pageSize, pageIndex, iterations, carsCount)
+		currentSize := CalculateCarsOnPage(pageSize, pageIndex, iterations, carsCount)
 
 		url, err := BuildURL(currentSize, pageIndex)
 		if err != nil {
