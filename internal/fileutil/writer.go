@@ -9,6 +9,10 @@ import (
 )
 
 func WriteResponse(out string, responses []dto.SearchResponse) error {
+	if out == "" {
+		return nil
+	}
+
 	data, err := json.MarshalIndent(responses, "", jsonIndent)
 
 	if err != nil {
