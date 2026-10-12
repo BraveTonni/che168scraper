@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -10,46 +11,11 @@ import (
 )
 
 func MakeRequest(ctx context.Context, url string) ([]byte, error) {
-	client := NewHTTPClient()
 
-	var (
-		attempt int
-		resp    *http.Response
-		req     *http.Request
-		err     error
-	)
+	resp, err := requestWithRetry(ctx, url)
 
-	for {
-		req, err = http.NewRequestWithContext(ctx, "GET", url, nil)
-
-		if err != nil {
-			return nil, err
-		}
-
-		resp, err = client.Do(req)
-
-		if err != nil {
-			if attempt == maxAttempts {
-				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
-			}
-
-			if err = ctx.Err(); err != nil {
-				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
-			}
-
-			attempt++
-			logger.Warnf("Failed reach to site %s. Attempt %d/%d\n", url, attempt, maxAttempts)
-
-			select {
-			case <-ctx.Done():
-				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
-			case <-time.After(retryTimeout):
-			}
-
-			continue
-		}
-
-		break
+	if err != nil {
+		return nil, fmt.Errorf("make request: %w", err)
 	}
 
 	defer resp.Body.Close()
@@ -64,5 +30,48 @@ func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 		return nil, fmt.Errorf("make request: %w", err)
 	}
 
-	return body, err
+	return body, nil
+}
+
+func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
+	client := NewHTTPClient()
+
+	var lastErr error // store last error if all retries failed
+
+	for attempt := 1; attempt <= maxAttempts; attempt++ {
+		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+
+		if err != nil {
+			return nil, fmt.Errorf("retry: %w", err)
+		}
+
+		resp, err := client.Do(req)
+
+		// successful reach to site
+		if err == nil {
+			return resp, nil
+		}
+		lastErr = err
+
+		if attempt == maxAttempts {
+			return nil, fmt.Errorf("retry after %d attempts: %w",
+				maxAttempts,
+				errors.Join(lastErr, ErrFailReachSite),
+			)
+		}
+
+		logger.Debugf("Failed reach to site %s. Attempt %d/%d\n", url, attempt, maxAttempts)
+
+		// retry timeout
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+		case <-time.After(retryTimeout):
+		}
+	}
+
+	return nil, fmt.Errorf("retry after %d attempts: %w",
+		maxAttempts,
+		errors.Join(lastErr, ErrFailReachSite),
+	)
 }
