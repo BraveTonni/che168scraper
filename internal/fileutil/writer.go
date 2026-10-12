@@ -2,6 +2,7 @@ package fileutil
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"scraper/internal/dto"
 	"scraper/internal/logger"
@@ -11,7 +12,7 @@ func WriteResponse(out string, responses []dto.SearchResponse) error {
 	data, err := json.MarshalIndent(responses, "", jsonIndent)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("write response to file: %w", err)
 	}
 
 	_, err = os.Stat(out)
@@ -23,7 +24,7 @@ func WriteResponse(out string, responses []dto.SearchResponse) error {
 	err = os.WriteFile(out, data, 0o755)
 
 	if err != nil {
-		return err
+		return fmt.Errorf("write response to file: %w", err)
 	}
 
 	return nil
