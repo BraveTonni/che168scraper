@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"scraper/internal/dto"
 	"scraper/internal/logger"
@@ -25,7 +26,7 @@ func GetCars(ctx context.Context, count int) ([]dto.SearchResponse, error) {
 		u, err := url.Parse(baseURL)
 
 		if err != nil {
-			return result, err
+			return result, fmt.Errorf("get cars: %w", err)
 		}
 
 		q := u.Query()
@@ -48,7 +49,7 @@ func GetCars(ctx context.Context, count int) ([]dto.SearchResponse, error) {
 
 		// If the user entered a number of cars greater than the number on the website, we return an error
 		if searchResponse.Result.TotalCount < count {
-			logger.Fatal("Get cars: ", ErrCarsLessThenPassed)
+			return nil, fmt.Errorf("get cars: %w", ErrCarsLessThenPassed)
 		}
 
 		// Last page
