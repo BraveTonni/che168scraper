@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"scraper/internal/logger"
 	"time"
 )
 
@@ -39,34 +38,19 @@ func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
 	var lastErr error // store last error if all retries failed
 
 	for attempt := 1; attempt <= maxAttempts; attempt++ {
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+		resp, err := doOnce(ctx, client, url)
 
-		if err != nil {
-			return nil, fmt.Errorf("retry: %w", err)
-		}
-
-		resp, err := client.Do(req)
-
-		// successful reach to site
 		if err == nil {
 			return resp, nil
 		}
 		lastErr = err
 
-		if attempt == maxAttempts {
-			return nil, fmt.Errorf("retry after %d attempts: %w",
-				maxAttempts,
-				errors.Join(lastErr, ErrFailReachSite),
-			)
-		}
-
-		logger.Debugf("Failed reach to site %s. Attempt %d/%d\n", url, attempt, maxAttempts)
-
-		// retry timeout
-		select {
-		case <-ctx.Done():
-			return nil, ctx.Err()
-		case <-time.After(retryTimeout):
+		if attempt < maxAttempts {
+			select {
+			case <-ctx.Done():
+				return nil, ctx.Err()
+			case <-time.After(retryTimeout):
+			}
 		}
 	}
 
@@ -74,4 +58,16 @@ func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
 		maxAttempts,
 		errors.Join(lastErr, ErrFailReachSite),
 	)
+}
+
+func doOnce(ctx context.Context, client *http.Client, url string) (*http.Response, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("new request: %w", err)
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("do request: %w", err)
+	}
+	return resp, nil
 }
