@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"scraper/internal/logger"
@@ -29,12 +30,11 @@ func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 
 		if err != nil {
 			if attempt == maxAttempts {
-				logger.Warnf("Can reach to site %s\n", url)
-				return nil, err
+				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
 			}
 
 			if err = ctx.Err(); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
 			}
 
 			attempt++
@@ -42,7 +42,7 @@ func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 
 			select {
 			case <-ctx.Done():
-				return nil, ctx.Err()
+				return nil, fmt.Errorf("make request: %w", ErrFailReachSite)
 			case <-time.After(retryTimeout):
 			}
 
@@ -55,10 +55,14 @@ func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFailReachSite
+		return nil, fmt.Errorf("make request, status: %d: %w", resp.StatusCode, ErrFailReachSite)
 	}
 
 	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, fmt.Errorf("make request: %w", err)
+	}
 
 	return body, err
 }
