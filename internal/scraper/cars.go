@@ -14,7 +14,7 @@ func GetCars(ctx context.Context, carsCount int) ([]dto.SearchResponse, error) {
 	for pageIndex := 1; pageIndex <= iterations; pageIndex++ {
 		currentSize := calculateCarsOnPage(pageSize, pageIndex, iterations, carsCount)
 
-		url, err := buildURL(currentSize, pageIndex)
+		url, err := BuildURL(currentSize, pageIndex)
 		if err != nil {
 			return nil, fmt.Errorf("build url, page %d: %w", pageIndex, err)
 		}
