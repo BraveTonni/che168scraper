@@ -12,7 +12,8 @@ A tool for scraping a specified number of cars from the che168 website (https://
 * Writes the collected cars to the output file
 
 ## RunBook: how to start?
-make up - command to run (for development)
+* make up - command to run (for development)
+* make test - command to run tests (for development)
 
 ## Requirements
 * go 1.27+
