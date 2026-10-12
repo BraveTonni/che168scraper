@@ -1,0 +1,34 @@
+[
+  {
+    "message": "成功",
+    "result": {
+      "carlist": [
+        {
+          "brandname": "Xiaomi Auto",
+          "carname": " Xiaomi Auto Xiaomi SU7 Ultra 2025 Model Ultra",
+          "cert_status": 1,
+          "claim_status": 1,
+          "c_name": "",
+          "dealer_id": 0,
+          "fuel_name": "",
+          "image_url": "",
+          "info_id": 0,
+          "mileage": "13000",
+          "mr_status": 1,
+          "price": "53770",
+          "regdate": "2025.04",
+          "seriesname": "Xiaomi SU7 Ultra",
+          "specname": "2025 Model Ultra",
+          "wechat_url": "https://work.weixin.qq.com/kfid/kfc44be0162a6978693",
+          "whatsapp_url": "https://wa.me/8618601141633?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5%21+%D0%9C%D0%B5%D0%BD%D1%8F+%D0%B8%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82+%D1%8D%D1%82%D0%BE%D1%82+%D0%B0%D0%B2%D1%82%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C.%0A%0A%D0%A1%D1%81%D1%8B%D0%BB%D0%BA%D0%B0%3A+https%3A%2F%2Fglobal.che168.com%2Fdetail%2F55323380%3Fsession_id%3D447c782c-b15f-478f-b928-85d4f8d7f74a%26fromsource%3DPCshouyeyoushangjia"
+        }
+      ],
+      "pagecount": 4812,
+      "pageindex": 1,
+      "pagesize": 1,
+      "queryid": "1791786713561$0$447c782c-b15f-478f-b928-85d4f8d7f74a$52797",
+      "totalcount": 4812
+    },
+    "returncode": 0
+  }
+]
