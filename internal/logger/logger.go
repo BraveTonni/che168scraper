@@ -2,7 +2,7 @@ package logger
 
 import "github.com/sirupsen/logrus"
 
-var log *logrus.Logger = logrus.New()
+var log = logrus.New()
 
 func Debug(args ...any)                 { log.Debug(args...) }
 func Debugf(format string, args ...any) { log.Debugf(format, args...) }
@@ -15,9 +15,13 @@ func Errorf(format string, args ...any) { log.Errorf(format, args...) }
 func Fatal(args ...any)                 { log.Fatal(args...) }
 func Fatalf(format string, args ...any) { log.Fatalf(format, args...) }
 
-func Init() {
+func Init(isDebug bool) {
 	log.Formatter = &logrus.TextFormatter{
 		FullTimestamp: true,
 	}
-	log.Level = logrus.DebugLevel
+	log.Level = logrus.InfoLevel
+
+	if isDebug {
+		log.Level = logrus.DebugLevel
+	}
 }

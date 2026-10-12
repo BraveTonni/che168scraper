@@ -2,71 +2,51 @@ package scraper
 
 import (
 	"context"
-	"encoding/json"
-	"net/url"
-	"scraper/internal/logger"
-	"scraper/internal/model"
+	"fmt"
+	"scraper/internal/dto"
 	"scraper/internal/network"
-	"strconv"
 )
 
-func GetCars(ctx context.Context, count int) ([]model.SearchResponse, error) {
-	iterations := count / pageSize
-	// We add one to the number of iterations, because if the user passes a number that is not divisible by 50 without a remainder, then we will lose the remaining part.
-	if count%pageSize != 0 {
-		iterations++
-	}
+func GetCars(ctx context.Context, carsCount int) ([]dto.SearchResponse, error) {
+	iterations := CalculateIterations(carsCount)
+	result := make([]dto.SearchResponse, 0, iterations)
 
-	var result []model.SearchResponse
+	for pageIndex := 1; pageIndex <= iterations; pageIndex++ {
+		currentSize := CalculateCarsOnPage(pageSize, pageIndex, iterations, carsCount)
 
-	for pageIndex := range iterations {
-		pageIndex++
-
-		u, err := url.Parse(baseURL)
-
+		url, err := BuildURL(currentSize, pageIndex)
 		if err != nil {
-			return result, err
+			return nil, fmt.Errorf("build url, page %d: %w", pageIndex, err)
 		}
 
-		q := u.Query()
-		q.Set("pagesize", strconv.Itoa(pageSize))
-		q.Set("pageindex", strconv.Itoa(pageIndex))
-		u.RawQuery = q.Encode()
-
-		resp, err := network.MakeRequest(ctx, u.String())
+		resp, err := fetchPage(ctx, url)
 		if err != nil {
-			// We do not return an error, as this may be a one-off
-			logger.Warn("Failed to get cars from page: ", err)
-			continue
+			return nil, fmt.Errorf("fetch page %d: %w", pageIndex, err)
 		}
 
-		var searchResponse model.SearchResponse
-		if err = json.Unmarshal(resp, &searchResponse); err != nil {
-			logger.Warn("Failed to unmarshal json: ", err)
-			continue
+		if resp.Result == nil {
+			return nil, fmt.Errorf("empty result, page %d", pageIndex)
+		}
+		if resp.Result.TotalCount < carsCount {
+			return nil, fmt.Errorf("page %d: %w", pageIndex, ErrCarsLessThenPassed)
 		}
 
-		// If the user entered a number of cars greater than the number on the website, we return an error
-		if searchResponse.Result.TotalCount < count {
-			logger.Fatal("Get cars: ", ErrCarsLessThenPassed)
-		}
-
-		// Last page
-		if pageIndex == iterations {
-			// Without verification, the page will be truncated to zero.
-			if count%pageSize != 0 {
-				remainedCars := count % pageSize
-				searchResponse.Result.CarList = searchResponse.Result.CarList[:remainedCars]
-				searchResponse.Result.CarsCount = remainedCars
-			}
-
-			logger.Debugf("Scrapped %d/%d cars\n", count, count)
-		} else {
-			logger.Debugf("Scrapped %d/%d cars\n", pageSize*pageIndex, count)
-		}
-
-		result = append(result, searchResponse)
+		result = append(result, *resp)
 	}
 
 	return result, nil
+}
+
+func fetchPage(ctx context.Context, url string) (*dto.SearchResponse, error) {
+	body, err := network.MakeRequest(ctx, url, maxAttempts)
+	if err != nil {
+		return nil, fmt.Errorf("make request: %w", err)
+	}
+
+	resp, err := decodeSearchResponse(body)
+	if err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+
+	return resp, nil
 }

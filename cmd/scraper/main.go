@@ -12,22 +12,29 @@ import (
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	logger.Init()
 
 	count := flag.Int("count", 15, "car parsing count")
 	outFileName := flag.String("output", "default", "output file name in folder out/ without .json")
+	debug := flag.Bool("debug", false, "enable debug logging mode")
 
 	flag.Parse()
+	logger.Init(*debug)
 
 	if *count <= 0 {
 		logger.Fatal("Count must be > 0.")
 	}
 
-	os.MkdirAll("out", 0755)
+	os.MkdirAll("out", 0o755)
 	output := filepath.Join("out/", *outFileName+".json")
 
 	logger.Info("Start scrapping cars")
 
 	// Run scrapping from site
-	scraper.Scrap(ctx, *count, output)
+	err := scraper.Scrap(ctx, *count, output)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	logger.Info("Scrap finished. Result writed to: ", output)
 }

@@ -2,22 +2,28 @@ package scraper
 
 import (
 	"context"
+	"fmt"
 	"scraper/internal/fileutil"
 	"scraper/internal/logger"
 )
 
-func Scrap(ctx context.Context, count int, output string) {
+func Scrap(ctx context.Context, count int, output string) error {
 	responses, err := GetCars(ctx, count)
 
 	if err != nil || len(responses) == 0 {
-		logger.Fatal("Scrap: ", err)
+		return fmt.Errorf("scrap: %w", ErrNoCars)
 	}
 
-	err = fileutil.WriteResponse(output, responses)
+	if output == "" {
+		logger.Debug("no write response in file, because output is null")
+	} else {
+		err = fileutil.WriteResponse(output, responses)
+
+	}
 
 	if err != nil {
-		logger.Error("Fail write response to file: ", err)
+		return fmt.Errorf("scrap: %w", err)
 	}
 
-	logger.Info("Scrap finished. Result writed to: ", output)
+	return nil
 }

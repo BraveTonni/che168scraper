@@ -1,4 +1,4 @@
-package model
+package dto
 
 type SearchCar struct {
 	BrandName   string `json:"brandname"`
