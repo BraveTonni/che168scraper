@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-func MakeRequest(ctx context.Context, url string) ([]byte, error) {
+func MakeRequest(ctx context.Context, url string, retries int) ([]byte, error) {
 
-	resp, err := requestWithRetry(ctx, url)
+	resp, err := requestWithRetry(ctx, url, retries)
 
 	if err != nil {
 		return nil, fmt.Errorf("make request: %w", err)
@@ -32,12 +32,12 @@ func MakeRequest(ctx context.Context, url string) ([]byte, error) {
 	return body, nil
 }
 
-func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
+func requestWithRetry(ctx context.Context, url string, retries int) (*http.Response, error) {
 	client := NewHTTPClient()
 
 	var lastErr error // store last error if all retries failed
 
-	for attempt := 1; attempt <= maxAttempts; attempt++ {
+	for attempt := 1; attempt <= retries; attempt++ {
 		resp, err := doOnce(ctx, client, url)
 
 		if err == nil {
@@ -45,7 +45,7 @@ func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
 		}
 		lastErr = err
 
-		if attempt < maxAttempts {
+		if attempt < retries {
 			select {
 			case <-ctx.Done():
 				return nil, ctx.Err()
@@ -55,7 +55,7 @@ func requestWithRetry(ctx context.Context, url string) (*http.Response, error) {
 	}
 
 	return nil, fmt.Errorf("retry after %d attempts: %w",
-		maxAttempts,
+		retries,
 		errors.Join(lastErr, ErrFailReachSite),
 	)
 }
