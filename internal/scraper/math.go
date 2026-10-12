@@ -13,8 +13,12 @@ func calculateIterations(count int) int {
 func calculateCarsOnPage(pageSize int, pageIndex int, iterations int, carsCount int) int {
 	if pageIndex == iterations {
 		// Last page, need return remaining page size
-		return carsCount % pageSize
+		remainder := carsCount % pageSize
+		if remainder == 0 {
+			return pageSize
+		}
+		return remainder
 	}
 
-	return pageSize * carsCount
+	return pageSize
 }
