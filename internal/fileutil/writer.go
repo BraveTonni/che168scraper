@@ -21,7 +21,7 @@ func WriteResponse(out string, responses []dto.SearchResponse) error {
 		logger.Debugf("File %s rewrited\n", out)
 	}
 
-	err = os.WriteFile(out, data, 0o755)
+	err = os.WriteFile(out, data, 0o644)
 
 	if err != nil {
 		return fmt.Errorf("write response to file: %w", err)
