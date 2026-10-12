@@ -29,5 +29,11 @@ func main() {
 	logger.Info("Start scrapping cars")
 
 	// Run scrapping from site
-	scraper.Scrap(ctx, *count, output)
+	err := scraper.Scrap(ctx, *count, output)
+
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	logger.Info("Scrap finished. Result writed to: ", output)
 }
